@@ -1,0 +1,74 @@
+/*
+ * Copyright (C) 2015 The Gravitee team (http://gravitee.io)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *         http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+import {PortalNotificationConfig} from "../entities/portalNotificationConfig";
+import {HookScope} from "../entities/hookScope";
+import {IHttpPromise} from "angular";
+
+class PortalNotificationService {
+  private Constants: any;
+  private applicationsURL: string;
+  private apisURL: string;
+  private portalgCfgURL: string;
+
+  constructor(private $http: ng.IHttpService, Constants) {
+    'ngInject';
+    this.Constants = Constants;
+    this.applicationsURL = `${Constants.baseURL}applications/`;
+    this.apisURL = `${Constants.baseURL}apis/`;
+    this.portalgCfgURL = `${Constants.baseURL}configuration/`;
+  }
+
+  getHooks(scope: HookScope): IHttpPromise<any> {
+    switch (scope) {
+      case HookScope.APPLICATION:
+        return this.$http.get(this.applicationsURL + "hooks");
+      case HookScope.API:
+        return this.$http.get(this.apisURL + "hooks");
+      case HookScope.PORTAL:
+        return this.$http.get(this.portalgCfgURL + "hooks");
+      default:
+        break;
+    }
+  }
+
+  getPortalNotifications(scope: HookScope, id: string): IHttpPromise<any> {
+    switch (scope) {
+      case HookScope.APPLICATION:
+        return this.$http.get(this.applicationsURL + id  + '/portalnotifications');
+      case HookScope.API:
+        return this.$http.get(this.apisURL + id + '/portalnotifications');
+      case HookScope.PORTAL:
+        return this.$http.get(this.portalgCfgURL + '/portalnotifications');
+      default:
+        break;
+    }
+  }
+
+  saveConfig(cfg: PortalNotificationConfig): IHttpPromise<any> {
+    if (cfg.referenceType === "API") {
+      return this.$http.post(this.apisURL + cfg.referenceId + '/portalnotifications', cfg);
+    } else if (cfg.referenceType === "APPLICATION") {
+      return this.$http.post(this.applicationsURL + cfg.referenceId + "/portalnotifications", cfg);
+    } else if (cfg.referenceType === "PORTAL") {
+      return this.$http.post(this.portalgCfgURL + '/portalnotifications', cfg);
+    } else {
+      return;
+    }
+  }
+}
+
+export default PortalNotificationService;

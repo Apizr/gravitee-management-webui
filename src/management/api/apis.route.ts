@@ -23,6 +23,9 @@ import MetadataService from "../../services/metadata.service";
 import GroupService from "../../services/group.service";
 import * as _ from "lodash";
 import AuditService from "../../services/audit.service";
+import PortalNotificationService from "../../services/portalNotification.service";
+import {HookScope} from "../../entities/hookScope";
+import GenericNotificationService from "../../services/genericNotification.service";
 
 export default apisRouterConfig;
 
@@ -687,6 +690,54 @@ function apisRouterConfig($stateProvider: ng.ui.IStateProvider) {
       resolve: {
         resolvedEvents:
           (AuditService: AuditService, $stateParams) => AuditService.listEvents($stateParams.apiId).then(response => response.data)
+      }
+    })
+    .state('management.apis.detail.notifications', {
+      url: '/notifications',
+      component: 'notificationSettingsComponent',
+      data: {
+        menu: {
+          label: 'Notifications',
+          icon: 'notifications',
+        }
+      },
+      resolve: {
+        resolvedHooks:
+          (PortalNotificationService: PortalNotificationService) =>
+            PortalNotificationService.getHooks(HookScope.API).then( (response) => response.data )
+      }
+    })
+    .state('management.apis.detail.notifications.portalnotifications', {
+      url: '/portal',
+      component: 'portalNotificationSettingsComponent',
+      data: {
+        menu: null,
+        docs: {
+          page: 'management-api-portalnotifications'
+        }
+      },
+      resolve: {
+        resolvedPortalNotifications:
+          (PortalNotificationService: PortalNotificationService, $stateParams: ng.ui.IStateParamsService) =>
+            PortalNotificationService.getPortalNotifications(HookScope.API, $stateParams.apiId).then( (response) => response.data )
+      }
+    })
+    .state('management.apis.detail.notifications.genericnotifications', {
+      url: '/generic',
+      component: 'genericNotificationSettingsComponent',
+      data: {
+        menu: null,
+        docs: {
+          page: 'management-api-genericnotifications'
+        }
+      },
+      resolve: {
+        resolvedNotifiers:
+          (GenericNotificationService: GenericNotificationService, $stateParams: ng.ui.IStateParamsService) =>
+            GenericNotificationService.getNotifiers(HookScope.API, $stateParams.apiId).then( (response) => response.data ),
+        resolvedGenericNotification:
+          (GenericNotificationService: GenericNotificationService, $stateParams: ng.ui.IStateParamsService) =>
+            GenericNotificationService.getGenericNotifications("default-email", HookScope.API, $stateParams.apiId).then( (response) => response.data )
       }
     });
 }

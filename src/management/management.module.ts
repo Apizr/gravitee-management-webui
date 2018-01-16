@@ -321,6 +321,17 @@ import { submenuFilter } from '../components/sidenav/submenu.filter';
 import TasksComponent from '../management/tasks/tasks.component';
 import TaskService from "../services/task.service";
 
+// Portal notifications
+import PortalNotificationsComponent from './portalnotifications/portalnotifications.component';
+import UserNotificationService from "../services/userNotification.service";
+
+// Notification Settings
+import NotificationSettingsComponent from '../components/notificationsettings/notificationsettings.component';
+import PortalNotificationSettingsComponent from '../components/notificationsettings/portalnotifications/portalnotificationsettings.component';
+import GenericNotificationSettingsComponent from '../components/notificationsettings/genericnotifications/genericnotificationsettings.component';
+import PortalNotificationService from "../services/portalNotification.service";
+import GenericNotificationService from "../services/genericNotification.service";
+
 // Documentation
 import PageComponent from '../components/documentation/page.component';
 import PageSwaggerComponent from '../components/documentation/page-swagger.component';
@@ -581,6 +592,15 @@ angular.module('gravitee-management', [uiRouter, permission, uiPermission, 'ngMa
 
   .component('tasks', TasksComponent)
   .service('TaskService', TaskService)
+
+  .component('portalNotifications', PortalNotificationsComponent)
+  .service('UserNotificationService', UserNotificationService)
+  .service('PortalNotificationService', PortalNotificationService)
+  .service('GenericNotificationService', GenericNotificationService)
+
+  .component('notificationSettingsComponent', NotificationSettingsComponent)
+  .component('portalNotificationSettingsComponent', PortalNotificationSettingsComponent)
+  .component('genericNotificationSettingsComponent', GenericNotificationSettingsComponent)
 
   .component('gvPage', PageComponent)
   .component('gvPageMarkdown', PageMarkdownComponent)

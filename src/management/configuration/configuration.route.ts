@@ -21,6 +21,9 @@ import PortalPagesService from '../../services/portalPages.service';
 import MetadataService from "../../services/metadata.service";
 import RoleService from "../../services/role.service";
 import GroupService from "../../services/group.service";
+import ApplicationService from "../../services/applications.service";
+import {HookScope} from "../../entities/hookScope";
+import PortalNotificationService from "../../services/portalNotification.service";
 
 export default configurationRouterConfig;
 
@@ -262,6 +265,27 @@ function configurationRouterConfig($stateProvider: ng.ui.IStateProvider) {
         perms: {
           only: ['management-role-u']
         }
+      }
+    })
+    .state('management.configuration.admin.notifications', {
+      url: '/notifications',
+      component: 'notificationSettingsComponent',
+      data: {
+        menu: {
+          label: 'Notifications',
+          icon: 'notifications',
+        },
+        docs: {
+          page: 'management-configuration-notifications'
+        }
+      },
+      resolve: {
+        resolvedHooks:
+          (PortalNotificationService: PortalNotificationService) =>
+            PortalNotificationService.getHooks(HookScope.PORTAL).then( (response) => response.data ),
+        resolvedPortalNotifications:
+          (PortalNotificationService: PortalNotificationService) =>
+            PortalNotificationService.getPortalNotifications(HookScope.PORTAL, null).then( (response) => response.data )
       }
     });
 }
